@@ -5,8 +5,12 @@
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Scanner; 
+
+import javax.sound.sampled.Line;
 /**
  * @author maxime
  *
@@ -20,6 +24,9 @@ public class PGM {
 	 */
 	public static void main(String[] args) throws FileNotFoundException {
 		// TODO Auto-generated method stub
+		int entierLu, valMax, largeur, hauteur;
+		int seuil;
+		int[] histogramme;
 		// Ajout de fancy stuff
 		System.out.println("|************TP PGM***********|");
 		System.out.println("|EI3 Info - Maxime Alay-Eddine|");
@@ -27,7 +34,6 @@ public class PGM {
 		System.out.println("Nom du fichier PGM à importer ?");
 		System.out.println("1: lena512x512.pgm");
 		System.out.println("2: peppers512x512.pgm");
-		System.out.println("3: test.pgm");
 		
 		Scanner sc = new Scanner(System.in);
 		// La valeur tapée sera stockée dans sc
@@ -40,9 +46,6 @@ public class PGM {
 		else if (Integer.parseInt(choix) == 2) {
 			monFichier = new File("/Users/maxime/workspace/TP_PGM/peppers512x512.pgm");
 		}
-		else if (Integer.parseInt(choix) == 3) {
-			monFichier = new File("/Users/maxime/workspace/TP_PGM/test.pgm");
-		}
 		
 		// Pour vérification, on affiche le nom du fichier
 		System.out.println("Le fichier à importer est : "+monFichier.getName());
@@ -50,30 +53,61 @@ public class PGM {
 		try {
 			Scanner parcours = new Scanner(monFichier);
 			
-			int entierLu, valMax, largeur, hauteur;
-			
 			try {
 				// Chargeons le fichier dans un tableau et calculons son histogramme
 				parcours.nextLine(); // On saute la ligne indiquant P2
 				parcours.nextLine(); // On saute la ligne de commentaire
-				largeur = parcours.nextInt();
-				hauteur = parcours.nextInt();
-				valMax = parcours.nextInt();
-				System.out.println("Largeur : "+largeur+"; Hauteur : "+hauteur+"; Valeur maximale : "+valMax);
+				largeur = parcours.nextInt(); // Lecture de la largeur
+				hauteur = parcours.nextInt(); // Lecture de la hauteur
+				valMax = parcours.nextInt(); // Lecture de la valeur max en niveaux de gris
+				
+				System.out.println("Saisissez votre valeur seuil :");
+				seuil = Integer.parseInt(sc.nextLine());
+				
+				System.out.println("Largeur : "+largeur+"; Hauteur : "+hauteur+"; Valeur maximale : "+valMax+"; Seuil : "+seuil);
 				
 				int[][] valeurs = new int[hauteur][largeur];
-				int[] histogramme = new int[valMax+1] ;
+				histogramme = new int[valMax+1] ;
 				
+				// On lit tous les pixels
 				for (int i=0;i<hauteur;i++) {
 					for (int j=0;j<largeur;j++) {
 						entierLu = parcours.nextInt();
-						valeurs[i][j] = entierLu;
+						System.out.println(entierLu);
+						if (entierLu > seuil) { // Truc bizarre avec le seuil parce que je n'ai pas lu le sujet en entier
+							entierLu = seuil;
+						}
 						histogramme[entierLu] = histogramme[entierLu] + 1;
+						valeurs[i][j] = entierLu;
 					}
 				}
 				
-				
-				
+				// Ecriture de l'histogramme dans un fichier sortie.pgm
+				FileWriter fichierSortie = null;
+				try {
+					fichierSortie = new FileWriter("/Users/maxime/workspace/TP_PGM/sortie.pgm");
+					fichierSortie.write("P2\n");
+					fichierSortie.write("100 " + Integer.toString(valMax)+"\n");
+					fichierSortie.write("255\n");
+					for (int i=0;i<valMax;i++) {
+						for (int j=1;j<=100;j++) {
+							System.out.println(histogramme[i]);
+							System.out.println(histogramme[i]/(largeur*hauteur)*100);
+							choix = sc.nextLine();
+							if(j < (histogramme[i]/(largeur*hauteur)*100)) {
+								fichierSortie.write("255");
+							}
+							else {
+								fichierSortie.write("0");
+							}
+							fichierSortie.write("\n");
+						}
+					}
+					fichierSortie.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 				parcours.close(); // Fermeture du flux de lecture de fichier
 				System.out.println("Fin du programme : SUCCES !");
