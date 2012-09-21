@@ -8,9 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.NoSuchElementException;
-import java.util.Scanner; 
-
-import javax.sound.sampled.Line;
+import java.util.Scanner;
 /**
  * @author maxime
  *
@@ -19,11 +17,11 @@ import javax.sound.sampled.Line;
 public class PGM {
 
 	/**
+	 * 
 	 * @param args
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException
 	 */
 	public static void main(String[] args) throws FileNotFoundException {
-		// TODO Auto-generated method stub
 		int entierLu, valMax, largeur, hauteur;
 		int seuil;
 		int[] histogramme;
@@ -119,7 +117,6 @@ public class PGM {
 					}
 					fichierSortie.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
