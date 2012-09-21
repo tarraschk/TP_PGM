@@ -73,14 +73,21 @@ public class PGM {
 				for (int i=0;i<hauteur;i++) {
 					for (int j=0;j<largeur;j++) {
 						entierLu = parcours.nextInt();
-						System.out.println(entierLu);
+						//System.out.println(entierLu);
 						if (entierLu > seuil) { // Truc bizarre avec le seuil parce que je n'ai pas lu le sujet en entier
 							entierLu = seuil;
 						}
+						//System.out.println("Précédent:"+histogramme[entierLu]);
 						histogramme[entierLu] = histogramme[entierLu] + 1;
+						//System.out.println("Suivant:"+histogramme[entierLu]);
 						valeurs[i][j] = entierLu;
 					}
 				}
+				/*for (int j=0;j<255;j++) {
+					System.out.println("Valeur: "+j+" -> "+histogramme[j]);
+				}*/
+
+				
 				
 				// Ecriture de l'histogramme dans un fichier sortie.pgm
 				FileWriter fichierSortie = null;
@@ -89,12 +96,19 @@ public class PGM {
 					fichierSortie.write("P2\n");
 					fichierSortie.write("100 " + Integer.toString(valMax)+"\n");
 					fichierSortie.write("255\n");
+					int maximum = 0;
+					for (int i=0;i<valMax;i++) { // On détermine le maximum du tableau de l'histogramme
+						// Ce maximum correspond à la nuance de gris la plus représentée dans l'image
+						if (histogramme[i] > maximum) {
+							maximum = histogramme[i];
+						}
+					}
 					for (int i=0;i<valMax;i++) {
+						// Pour chaque valeur de nuance de gris, on trace une barre plus ou moins longue en fonction du nombre d'occurrences existantes par rapport au maximum de l'histogramme 
 						for (int j=1;j<=100;j++) {
-							System.out.println(histogramme[i]);
-							System.out.println(histogramme[i]/(largeur*hauteur)*100);
-							choix = sc.nextLine();
-							if(j < (histogramme[i]/(largeur*hauteur)*100)) {
+							//System.out.println(histogramme[i]*100/maximum);
+							//choix = sc.nextLine();
+							if(j < (histogramme[i]*100/maximum)) {
 								fichierSortie.write("255");
 							}
 							else {
